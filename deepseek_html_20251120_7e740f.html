@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riga Holiday - Коттеджный поселок</title>
+    <!-- Подключаем EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // Инициализация EmailJS с вашим публичным ключом
+            emailjs.init("YOUR_PUBLIC_KEY"); // Замените на ваш реальный ключ
+        })();
+    </script>
+    <style>
+        /* Общие стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #d4af37;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #b8941f;
+        }
+        
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        section {
+            padding: 60px 0;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 32px;
+            color: #2c3e50;
+        }
+        
+        /* Шапка */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: #d4af37;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: #d4af37;
+        }
+        
+        .phone {
+            font-weight: bold;
+            color: #2c3e50;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        
+        /* Герой секция */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+        
+        /* О поселке */
+        .about {
+            background: #f9f9f9;
+        }
+        
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+        
+        .about-text {
+            flex: 1;
+        }
+        
+        .about-image {
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* Коттеджи */
+        .cottages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .cottage-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .cottage-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .cottage-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .cottage-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .cottage-card:hover .cottage-image img {
+            transform: scale(1.1);
+        }
+        
+        .cottage-info {
+            padding: 20px;
+        }
+        
+        .cottage-info h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .cottage-price {
+            font-weight: bold;
+            color: #d4af37;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        
+        /* Расположение */
+        .location {
+            background: #f9f9f9;
+        }
+        
+        .location-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .location-map {
+            width: 100%;
+            height: 400px;
+            background: #e9e9e9;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .location-info {
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        /* Контакты */
+        .contact-content {
+            display: flex;
+            gap: 40px;
+        }
+        
+        .contact-info {
+            flex: 1;
+        }
+        
+        .contact-form {
+            flex: 1;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        
+        .form-message {
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        
+        .form-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .form-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Футер */
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 0 20px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column {
+            flex: 1;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: #d4af37;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                margin: 15px 0;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .about-content,
+            .contact-content {
+                flex-direction: column;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header>
+        <div class="container header-container">
+            <a href="#" class="logo">RIGA <span>HOLIDAY</span></a>
+            <nav>
+                <ul>
+                    <li><a href="#about">О поселке</a></li>
+                    <li><a href="#cottages">Коттеджи</a></li>
+                    <li><a href="#location">Расположение</a></li>
+                    <li><a href="#contacts">Контакты</a></li>
+                </ul>
+            </nav>
+            <a href="tel:+79099015933" class="phone">+7 (909) 901-59-33</a>
+        </div>
+    </header>
+
+    <!-- Герой секция -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Коттеджный поселок Riga Holiday</h1>
+            <p>Элитная загородная недвижимость в живописном месте для комфортной жизни и отдыха</p>
+            <a href="#cottages" class="btn">Посмотреть коттеджи</a>
+        </div>
+    </section>
+
+    <!-- О поселке -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2>О поселке</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Riga Holiday - это современный коттеджный поселок премиум-класса, расположенный в экологически чистом районе. Мы предлагаем комфортабельные дома для постоянного проживания и отдыха.</p>
+                    <p>Каждый коттедж построен с использованием качественных материалов и современного оборудования. В поселке создана вся необходимая инфраструктура для комфортной жизни.</p>
+                    <p>На территории поселка есть детские площадки, зоны отдыха, спортивные площадки и охраняемая территория для вашей безопасности.</p>
+                    <a href="#contacts" class="btn">Узнать больше</a>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1575517111836-8e43e55b5d8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Коттеджный поселок Riga Holiday">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Коттеджи -->
+    <section id="cottages" class="cottages">
+        <div class="container">
+            <h2>Наши коттеджи</h2>
+            <div class="cottages-grid">
+                <div class="cottage-card">
+                    <div class="cottage-image">
+                        <img src="https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Коттедж Эконом">
+                    </div>
+                    <div class="cottage-info">
+                        <h3>Коттедж "Эконом"</h3>
+                        <p>Компактный и уютный дом для небольшой семьи. Площадь 80 м², 2 спальни, гостиная, кухня и санузел.</p>
+                        <div class="cottage-price">от 5 000 000 руб.</div>
+                        <a href="#contacts" class="btn">Подробнее</a>
+                    </div>
+                </div>
+                <div class="cottage-card">
+                    <div class="cottage-image">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Коттедж Комфорт">
+                    </div>
+                    <div class="cottage-info">
+                        <h3>Коттедж "Комфорт"</h3>
+                        <p>Просторный дом для семьи. Площадь 120 м², 3 спальни, гостиная, кухня-столовая и 2 санузла.</p>
+                        <div class="cottage-price">от 8 000 000 руб.</div>
+                        <a href="#contacts" class="btn">Подробнее</a>
+                    </div>
+                </div>
+                <div class="cottage-card">
+                    <div class="cottage-image">
+                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Коттедж Премиум">
+                    </div>
+                    <div class="cottage-info">
+                        <h3>Коттедж "Премиум"</h3>
+                        <p>Роскошный дом с панорамными окнами. Площадь 200 м², 4 спальни, просторная гостиная, кабинет и 3 санузла.</p>
+                        <div class="cottage-price">от 12 000 000 руб.</div>
+                        <a href="#contacts" class="btn">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Расположение -->
+    <section id="location" class="location">
+        <div class="container">
+            <h2>Расположение</h2>
+            <div class="location-content">
+                <div class="location-map">
+                    <!-- Здесь будет карта -->
+                    <p>Карта расположения поселка</p>
+                </div>
+                <div class="location-info">
+                    <p>Поселок Riga Holiday расположен в живописном районе всего в 30 км от центра города. Рядом находятся лесной массив, озеро и вся необходимая инфраструктура.</p>
+                    <p>Доступны удобные подъездные пути, рядом проходит федеральная трасса. Расстояние до международного аэропорта - 40 минут езды.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Контакты -->
+    <section id="contacts" class="contacts">
+        <div class="container">
+            <h2>Контакты</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Свяжитесь с нами</h3>
+                    <p>Мы с радостью ответим на все ваши вопросы и организуем просмотр коттеджей.</p>
+                    <p><strong>Телефон:</strong> +7 (909) 901-59-33</p>
+                    <p><strong>Email:</strong> info@riga-holiday.ru</p>
+                    <p><strong>Адрес:</strong> Московская область, коттеджный поселок Riga Holiday</p>
+                    <p><strong>Режим работы:</strong> Пн-Пт: 9:00-20:00, Сб-Вс: 10:00-18:00</p>
+                </div>
+                <div class="contact-form">
+                    <h3>Оставьте заявку</h3>
+                    <div id="form-message" class="form-message"></div>
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Ваше имя *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Телефон *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="interest">Интересует</label>
+                            <select id="interest" name="interest">
+                                <option value="">Выберите вариант</option>
+                                <option value="Эконом">Коттедж "Эконом"</option>
+                                <option value="Комфорт">Коттедж "Комфорт"</option>
+                                <option value="Премиум">Коттедж "Премиум"</option>
+                                <option value="Консультация">Консультация</option>
+                                <option value="Другое">Другое</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Сообщение</label>
+                            <textarea id="message" name="message" placeholder="Расскажите о ваших пожеланиях..."></textarea>
+                        </div>
+                        <button type="submit" class="btn" id="submit-btn">Отправить заявку</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Riga Holiday</h3>
+                    <p>Элитный коттеджный поселок для комфортной жизни и отдыха.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="#about">О поселке</a></li>
+                        <li><a href="#cottages">Коттеджи</a></li>
+                        <li><a href="#location">Расположение</a></li>
+                        <li><a href="#contacts">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li>+7 (909) 901-59-33</li>
+                        <li>info@riga-holiday.ru</li>
+                        <li>Московская область</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Riga Holiday. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Плавная прокрутка для якорных ссылок
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Изменение шапки при прокрутке
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            }
+        });
+
+        // Обработка формы обратной связи
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const formMessage = document.getElementById('form-message');
+            
+            // Показываем индикатор загрузки
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
+            formMessage.style.display = 'none';
+            
+            // Собираем данные формы
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                interest: document.getElementById('interest').value,
+                message: document.getElementById('message').value,
+                date: new Date().toLocaleString('ru-RU')
+            };
+            
+            // Отправляем данные через EmailJS
+            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', formData)
+                .then(function(response) {
+                    // Успешная отправка
+                    formMessage.textContent = 'Спасибо! Ваша заявка успешно отправлена. Мы свяжемся с вами в ближайшее время.';
+                    formMessage.className = 'form-message success';
+                    formMessage.style.display = 'block';
+                    
+                    // Очищаем форму
+                    document.getElementById('contact-form').reset();
+                    
+                    // Прокручиваем к сообщению об успехе
+                    formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, function(error) {
+                    // Ошибка отправки
+                    formMessage.textContent = 'Произошла ошибка при отправке заявки. Пожалуйста, попробуйте еще раз или свяжитесь с нами по телефону.';
+                    formMessage.className = 'form-message error';
+                    formMessage.style.display = 'block';
+                    
+                    // Прокручиваем к сообщению об ошибке
+                    formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                })
+                .finally(function() {
+                    // Восстанавливаем кнопку
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Отправить заявку';
+                });
+        });
+
+        // Простая валидация телефона
+        document.getElementById('phone').addEventListener('input', function(e) {
+            // Удаляем все нецифровые символы
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Форматируем номер телефона
+            if (value.length > 0) {
+                if (value.length <= 3) {
+                    value = value;
+                } else if (value.length <= 6) {
+                    value = `(${value.slice(0,3)}) ${value.slice(3)}`;
+                } else if (value.length <= 8) {
+                    value = `(${value.slice(0,3)}) ${value.slice(3,6)}-${value.slice(6)}`;
+                } else {
+                    value = `(${value.slice(0,3)}) ${value.slice(3,6)}-${value.slice(6,8)}-${value.slice(8,10)}`;
+                }
+            }
+            
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
